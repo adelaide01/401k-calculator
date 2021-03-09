@@ -1,0 +1,168 @@
+<!-- https://stackoverflow.com/questions/4712585/calculating-future-value-with-compound-interest-with-javascript -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Tribune 401(k) calculator</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+	<style>
+		body{background-color:#666666;}
+		main,label,input{font-family: 'Anton', sans-serif; letter-spacing: 1px; }
+		main, label{color:#00ff00;}
+		input{text-align: right;}
+		*, *:before, *:after {
+		  box-sizing: border-box;
+		  -ms-box-sizing:border-box;
+		  -moz-box-sizing:border-box;
+		  -webkit-box-sizing:border-box;
+		}
+		input[type=text] {
+		  width: 40%;
+		  font-size:1em;
+		  padding: 2px;
+		  margin: 4px 0;
+		  border-radius: 8px;
+		}
+		input[type="button"], input[type="button"]:visited{height: 50px;
+			color:#FFFFFF;
+			font-size:1em;
+			border-radius: 8px;
+			width:100%;
+			margin: 2% auto;
+			border: 1px solid #FFFFFF;
+			background-color:#666666;
+			padding: 0px 10px;
+			width:86%;
+		}
+		input[type="button"]:hover{
+			border: 2px solid #00ff00;
+			color: #00ff00;
+		}
+		input#no_match, input#with_match{
+			color:#FFFFFF;
+		}
+		input#difference{
+			color:orange;
+		}
+		input#no_matchZ, input#with_matchZ{color:black	;}
+
+		label{display:inline-block; width:45%;}
+
+		main h2{letter-spacing: 2px;
+				text-align: center;
+		}
+		@media (min-width: 700px){
+			main{max-width: 600px;
+				margin: 0 auto;
+			}
+		}
+	</style>
+</head>
+<body>
+    <main>
+        <h2>Tribune/Alden 401(k) calculator</h2>
+		<form>        
+        <label for="salary">Salary in dollars</label>
+        <input type="text" id="salary" value="60000"><br/>
+
+        <label for="percent">Your percent contribution</label>
+        <input type="text" id="percent" value="5"><br/>
+        
+        <label for="rate">Interest rate (rate of return)</label>
+        <input type="text" id="rate" value="6.5"><br/>
+        
+        <label for="years">Number of years</label>
+        <input type="text" id="years" value="4"><br/>
+
+        <input type="button" id="calculate" value="Click to calculate your investment"><br/>
+        
+        <label for="with_match">With company match per year</label>
+        <input type="text" id="with_match" disabled><br/>
+
+        <label for="no_match">Without company match</label>
+        <input type="text" id="no_match" disabled><br/>
+
+        <label for="with_matchZ">Total in final year with match</label>
+        <input type="text" id="with_matchZ" disabled><br/>
+
+        <label for="no_matchZ">Without company match</label>
+        <input type="text" id="no_matchZ" disabled><br/>
+
+        <label for="difference">Difference</label>
+        <input type="text" id="difference" disabled><br/>
+        <form>   
+    </main>
+</body>
+<script>
+
+var $ = function(id) {
+    return document.getElementById(id);
+};
+
+var companyContrib = function(salary, percent, rate, years){
+
+	var salary = parseFloat($("salary").value);
+    var percent = parseFloat($("percent").value);
+	var contrib = 0;
+
+	if (percent == 0){
+		contrib == 0;
+		no_match == 0;
+
+	} else if (percent <= 2 && percent > 0) {
+		contrib += (salary * (percent / 100)) * 2
+
+	} else if (percent <= 4 && percent > 2){
+		contrib += (salary * (percent / 100)) + (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 ) 
+
+	} else if (percent > 4){
+		contrib += (salary * (percent / 100)) + (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 )
+	}
+	// return [contrib, nomatch, salary, percent]
+	futureValues(contrib)
+}
+
+function futureValues(contrib) {
+	var salary = parseFloat($("salary").value);
+	var percent = parseFloat($("percent").value);
+	var rate = parseFloat($("rate").value / 100);
+    var years = parseFloat($("years").value);
+	// var salary = 60000;
+	// var percent = 5;
+	// var rate = 0.065;
+	// var years = 4;
+	// var contrib = 0;	
+	var futureValue = 0;
+	var no_match_futureValue = 0;
+
+	var happy401k = {}
+	var sad401k = {}
+
+	for (i = 0; i < years; i++){	
+		contrib_no_match = (salary * (percent / 100))
+		var no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
+
+		sad401k[i + 1] = no_match_futureValue.toFixed(0)
+		$("no_match").value = parseInt(sad401k[1]).toLocaleString();
+		$("no_matchZ").value = parseInt(sad401k[years]).toLocaleString();
+
+		futureValue = (futureValue + contrib) * (1 + rate); 
+		happy401k[i + 1] = futureValue.toFixed(0)	//upload year, value into a dict
+
+		$("with_match").value =  parseInt(happy401k[1]).toLocaleString(); //extract value of first year
+		$("with_matchZ").value =  parseInt(happy401k[years]).toLocaleString(); //extract value of final year
+
+		$("difference").value = parseInt(happy401k[years] - sad401k[years]).toLocaleString();
+	}
+}
+
+    window.onload = function (){
+        $("calculate").onclick = companyContrib;
+        $("salary").focus();
+        
+    }
+
+</script>
+</html>
