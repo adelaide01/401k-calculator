@@ -1,3 +1,4 @@
+
 <!-- https://stackoverflow.com/questions/4712585/calculating-future-value-with-compound-interest-with-javascript -->
 <!DOCTYPE html>
 <html>
@@ -9,6 +10,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 	<style>
 		body{background-color:#666666;}
+		main {margin: 0 auto;}
 		main,label,input{font-family: 'Anton', sans-serif; letter-spacing: 1px; }
 		main, label{color:#00ff00;}
 		input{text-align: right;}
@@ -18,81 +20,129 @@
 		  -moz-box-sizing:border-box;
 		  -webkit-box-sizing:border-box;
 		}
+		input:focus{border: 1px solid #00ff00; outline: none !important;}
+		div.basic, input[type=text] {
+			width: 47%;
+			text-align: center;
+		}
 		input[type=text] {
-		  width: 40%;
 		  font-size:1em;
 		  padding: 2px;
 		  margin: 4px 0;
 		  border-radius: 8px;
 		}
-		input[type="button"], input[type="button"]:visited{height: 50px;
+		#button{
+			height: 50px;
 			color:#FFFFFF;
 			font-size:1em;
 			border-radius: 8px;
-			width:100%;
-			margin: 2% auto;
+			width:99%;
+			float:left;
+			margin: 2.3% auto;
 			border: 1px solid #FFFFFF;
 			background-color:#666666;
-			padding: 0px 10px;
-			width:86%;
 		}
-		input[type="button"]:hover{
+		#button_text{text-align: center; padding: 10px 0px;}
+		#button:hover{
 			border: 2px solid #00ff00;
 			color: #00ff00;
 		}
-		input#no_match, input#with_match{
-			color:#FFFFFF;
-		}
-		input#difference{
-			color:orange;
-		}
-		input#no_matchZ, input#with_matchZ{color:black	;}
+		div.basic{
+			display: inline-block;    
+			float: right;
+			/*border: .5px solid white;*/
+			height: 24px;
+			margin: 0px 9px 0px 0px;
+    	}
+    	div.label{ margin: 3% 0% 1% 0%;}
 
-		label{display:inline-block; width:45%;}
+		.difference, #difference{
+			color:#ff8500;
+		}
+		input#no_match_final, input#with_match_final{color:black	;}
+
+		.flexbox {
+	        display: flex; 
+    	}
+    	.pair {flex: 1 1 auto; }
+
+		label{display:inline-block; width:50%;}
 
 		main h2{letter-spacing: 2px;
 				text-align: center;
 		}
 		@media (min-width: 700px){
-			main{max-width: 600px;
-				margin: 0 auto;
+			main{
+				max-width: 600px;
 			}
 		}
+		@media (min-width: 321px) and (max-width: 699px){
+			main h2{font-size: 1.25em; text-align: left;}
+		}
+		@media (max-width: 320px){
+			main h2{font-size: 1em; text-align: left;}
+		}
+
 	</style>
 </head>
 <body>
     <main>
         <h2>Tribune/Alden 401(k) calculator</h2>
+<!--         Enter your salary and how much you contribute each year to find out how much you'll lose with Tribune's
+ proposed changes to the the 401(k)	plan -->
 		<form>        
         <label for="salary">Salary in dollars</label>
-        <input type="text" id="salary" value="60000"><br/>
+        <input type="text" id="salary" value="$60,000"><br/>
 
         <label for="percent">Your percent contribution</label>
-        <input type="text" id="percent" value="5"><br/>
+        <input type="text" id="percent" value="5%"><br/>
         
-        <label for="rate">Interest rate (rate of return)</label>
-        <input type="text" id="rate" value="6.5"><br/>
+        <label for="rate">Rate of return</label>
+        <input type="text" id="rate" value="6.5%"><br/>
         
-        <label for="years">Number of years</label>
+        <label for="years">Years until retirement</label>
         <input type="text" id="years" value="4"><br/>
+        </form>  
+        <!-- <input type="button" id="calculate" value="Click to see your future investment"><br/> -->
+        <div id="button"><div id="button_text">Click to see your projected 401(k)</div></div>
 
-        <input type="button" id="calculate" value="Click to calculate your investment"><br/>
+        <label id="label_annual_contrib"></label>
+        <div id="annual_contrib" class="basic"></div>
         
-        <label for="with_match">With company match per year</label>
-        <input type="text" id="with_match" disabled><br/>
+        <label id="label_annual_company_match"></label>
+        <div id="annual_company_match" class="basic"></div>
+        
+        <div class="flexbox label">
+        <div class="pair" id="including_interest"></div>
+        <div class="pair">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="pair">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="pair" id="label_with_match"></div> 
+        <div class="pair" id="label_no_match"></div>
+    	</div>
 
-        <label for="no_match">Without company match</label>
-        <input type="text" id="no_match" disabled><br/>
+        <div class="flexbox">
+        <label class="pair" id="first_year"></label>        
+        <div class="pair" id="with_match"></div>
+        <div class="pair" id="no_match"></div>
+    	</div>
 
-        <label for="with_matchZ">Total in final year with match</label>
-        <input type="text" id="with_matchZ" disabled><br/>
+    	<div class="flexbox">
+        <label class="pair" id="label_match_final"></label>
+        <div class="pair" id="with_match_final"></div>
+        <div class="pair" id="no_match_final"></div>
+    	</div>
 
-        <label for="no_matchZ">Without company match</label>
-        <input type="text" id="no_matchZ" disabled><br/>
+    	<div class="flexbox">
+    	<div class="pair">&nbsp;</div>
+    	<div class="pair">&nbsp;</div>
+    	<div class="pair">&nbsp;</div>
+    	<div class="pair">&nbsp;</div>
+    	<div class="pair" id="leftarrow"></div>
+    	<div class="pair" id="rightarrow"></div>
+    	</div>
+        <label id="label_difference" class="difference" for="difference"></label>
+        <div class="basic" class="difference" id="difference"></div>
 
-        <label for="difference">Difference</label>
-        <input type="text" id="difference" disabled><br/>
-        <form>   
     </main>
 </body>
 <script>
@@ -101,34 +151,51 @@ var $ = function(id) {
     return document.getElementById(id);
 };
 
-var companyContrib = function(salary, percent, rate, years){
+var companyContrib = function(salary, percent){
 
-	var salary = parseFloat($("salary").value);
-    var percent = parseFloat($("percent").value);
+	var salary = $("salary").value.replace("$","").replace(",","");
+    var percent = $("percent").value.replace("%","");
 	var contrib = 0;
 
 	if (percent == 0){
 		contrib == 0;
 		no_match == 0;
+		$("annual_contrib").innerHTML = 0;
+		$("annual_company_match").innerHTML = 0;
+		
 
 	} else if (percent <= 2 && percent > 0) {
-		contrib += (salary * (percent / 100)) * 2
+		tribune = (salary * (percent / 100))
+		employee = (salary * (percent / 100))
+		contrib = tribune + employee
+		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString());
+		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString());
 
 	} else if (percent <= 4 && percent > 2){
-		contrib += (salary * (percent / 100)) + (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 ) 
-
+		tribune = (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 ) 	
+		employee = (salary * (percent / 100)) 
+		contrib = tribune + employee
+		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString());
+		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString());
+	
 	} else if (percent > 4){
-		contrib += (salary * (percent / 100)) + (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 )
+		employee = (salary * (percent / 100)) 
+		tribune = (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 )
+		contrib = tribune + employee
+		$("label_annual_contrib").innerHTML = "Your contribution";
+		$("label_annual_company_match").innerHTML = "Tribune's match";
+		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString()).concat(' each year');
+		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString().concat(' each year'));
 	}
-	// return [contrib, nomatch, salary, percent]
+
 	futureValues(contrib)
 }
 
 function futureValues(contrib) {
-	var salary = parseFloat($("salary").value);
-	var percent = parseFloat($("percent").value);
-	var rate = parseFloat($("rate").value / 100);
-    var years = parseFloat($("years").value);
+	var salary = $("salary").value.replace("$","").replace(",","")
+	var percent = $("percent").value.replace("%","")
+	var rate = $("rate").value.replace("%","") / 100
+    var years = Math.round($("years").value)
 	// var salary = 60000;
 	// var percent = 5;
 	// var rate = 0.065;
@@ -145,22 +212,40 @@ function futureValues(contrib) {
 		var no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
 
 		sad401k[i + 1] = no_match_futureValue.toFixed(0)
-		$("no_match").value = parseInt(sad401k[1]).toLocaleString();
-		$("no_matchZ").value = parseInt(sad401k[years]).toLocaleString();
+		$("no_match").innerHTML = "$".concat(parseInt(sad401k[1]).toLocaleString())
+		$("no_match_final").innerHTML = "$".concat(parseInt(sad401k[years]).toLocaleString())
 
 		futureValue = (futureValue + contrib) * (1 + rate); 
 		happy401k[i + 1] = futureValue.toFixed(0)	//upload year, value into a dict
 
-		$("with_match").value =  parseInt(happy401k[1]).toLocaleString(); //extract value of first year
-		$("with_matchZ").value =  parseInt(happy401k[years]).toLocaleString(); //extract value of final year
+		$("with_match").innerHTML =  "$".concat(parseInt(happy401k[1]).toLocaleString()) //extract value of first year
+		$("with_match_final").innerHTML = "$".concat(parseInt(happy401k[years]).toLocaleString()) //extract value of final year
+		$("label_match_final").innerHTML = "&nbsp;".concat("Year ").concat(years)
+		// $("label_no_match_final").innerHTML = "&nbsp;&nbsp;&nbsp;".concat("Year ").concat(years).concat(" no match &#9760; ")
+		$("label_difference").innerHTML = "&nbsp".concat("Year ").concat(years).concat(" difference")
 
-		$("difference").value = parseInt(happy401k[years] - sad401k[years]).toLocaleString();
+		$("difference").innerHTML = "$".concat(parseInt(happy401k[years] - sad401k[years]).toLocaleString())
+
+		$("including_interest").innerHTML = "Including interest";
+		$("label_with_match").innerHTML = "With match";
+		$("label_no_match").innerHTML = "No match";
+		$("first_year").innerHTML = "&nbsp;Year 1";
+		$("leftarrow").innerHTML = "&#x2198;"
+		$("rightarrow").innerHTML = "&#x2199;"
 	}
 }
 
     window.onload = function (){
-        $("calculate").onclick = companyContrib;
+        
         $("salary").focus();
+        $("button").onclick = companyContrib;
+
+        document.addEventListener('keydown', function (event) {
+		if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
+		    event.preventDefault();
+		    companyContrib();
+		  }
+		});
         
     }
 
