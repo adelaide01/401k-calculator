@@ -5,15 +5,18 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Tribune 401(k) calculator</title>
+	<title>Tribune 401k calculator</title>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+	
+
 	<style>
-		body{background-color:#666666;}
+		body,input{background-color:#666666; font-family: 'Anton', sans-serif; letter-spacing: 1px;}
 		main {margin: 0 auto;}
-		main,label,input{font-family: 'Anton', sans-serif; letter-spacing: 1px; }
+		/*main,label,input .ct-label{font-family: 'Anton', sans-serif; letter-spacing: 1px; }*/
 		main, label{color:#00ff00;}
-		input{text-align: right;}
+		input{text-align: right; background-color:white;}
 		*, *:before, *:after {
 		  box-sizing: border-box;
 		  -ms-box-sizing:border-box;
@@ -59,7 +62,7 @@
 		.difference, #difference{
 			color:#ff8500;
 		}
-		input#no_match_final, input#with_match_final{color:black	;}
+		input#no_match_final, input#with_match_final{color:black;}
 
 		.flexbox {
 	        display: flex; 
@@ -71,36 +74,53 @@
 		main h2{letter-spacing: 2px;
 				text-align: center;
 		}
+
+		#line-chart{height:300px; margin: auto;}
+		.ct-series-a .ct-line, .ct-series-a .ct-point {stroke:#00ff00;}
+		.ct-label {font-size: 15px; color:white;}
+
 		@media (min-width: 700px){
 			main{
 				max-width: 600px;
 			}
+			#line-chart{width:45%;}
 		}
 		@media (min-width: 321px) and (max-width: 699px){
 			main h2{font-size: 1.25em; text-align: left;}
+			#line-chart{width:100%;}
 		}
 		@media (max-width: 320px){
 			main h2{font-size: 1em; text-align: left;}
+			#line-chart{width:100%;}
 		}
 
+		button.info{border-radius:10px; outline:none; }
+		/*button:active { border-style: outset;}*/
+
+		input #percent{color:orange;}
+
 	</style>
+
+
 </head>
 <body>
+	
     <main>
-        <h2>Tribune/Alden 401(k) calculator</h2>
+        <h2>Tribune/Alden 401k calculator <button class="info" id="zero" class="tooltip">i</button></h2>
 <!--         Enter your salary and how much you contribute each year to find out how much you'll lose with Tribune's
  proposed changes to the the 401(k)	plan -->
+
 		<form>        
-        <label for="salary">Salary in dollars</label>
+        <label for="salary">Salary in dollars <button class="info" id="one" class="tooltip">i</button></label>
         <input type="text" id="salary" value="$60,000"><br/>
 
-        <label for="percent">Your percent contribution</label>
+        <label for="percent">Your percent contribution <button class="info" id="two" class="tooltip">i</button></label>
         <input type="text" id="percent" value="5%"><br/>
         
-        <label for="rate">Rate of return</label>
+        <label for="rate">Rate of return  <button class="info" id="three" class="tooltip">i</button></label>
         <input type="text" id="rate" value="6.5%"><br/>
         
-        <label for="years">Years until retirement</label>
+        <label for="years">Years until retirement <button class="info" id="four" class="tooltip">i</button></label>
         <input type="text" id="years" value="4"><br/>
         </form>  
         <!-- <input type="button" id="calculate" value="Click to see your future investment"><br/> -->
@@ -142,10 +162,11 @@
     	</div>
         <label id="label_difference" class="difference" for="difference"></label>
         <div class="basic" class="difference" id="difference"></div>
-
     </main>
+    	<div id="line-chart" style=""></div>
 </body>
 <script>
+
 
 var $ = function(id) {
     return document.getElementById(id);
@@ -191,63 +212,111 @@ var companyContrib = function(salary, percent){
 	futureValues(contrib)
 }
 
+var happy401kforChart = {} //store values for each year that is calculated
+var sad401kforChart = {}   //store values for each year that is calculated
+
+
 function futureValues(contrib) {
 	var salary = $("salary").value.replace("$","").replace(",","")
 	var percent = $("percent").value.replace("%","")
 	var rate = $("rate").value.replace("%","") / 100
     var years = Math.round($("years").value)
-	// var salary = 60000;
-	// var percent = 5;
-	// var rate = 0.065;
-	// var years = 4;
-	// var contrib = 0;	
 	var futureValue = 0;
 	var no_match_futureValue = 0;
 
-	var happy401k = {}
-	var sad401k = {}
+	var happy401k = {} //store values for each year that is calculated
+	var sad401k = {}   //store values for each year that is calculated
 
+	
 	for (i = 0; i < years; i++){	
 		contrib_no_match = (salary * (percent / 100))
 		var no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
 
-		sad401k[i + 1] = no_match_futureValue.toFixed(0)
+		sad401k[i + 1] = parseInt(no_match_futureValue.toFixed(0))
 		$("no_match").innerHTML = "$".concat(parseInt(sad401k[1]).toLocaleString())
 		$("no_match_final").innerHTML = "$".concat(parseInt(sad401k[years]).toLocaleString())
 
 		futureValue = (futureValue + contrib) * (1 + rate); 
-		happy401k[i + 1] = futureValue.toFixed(0)	//upload year, value into a dict
+		happy401k[i + 1] = parseInt(futureValue.toFixed(0))	//upload year, value into a dict
+
 
 		$("with_match").innerHTML =  "$".concat(parseInt(happy401k[1]).toLocaleString()) //extract value of first year
 		$("with_match_final").innerHTML = "$".concat(parseInt(happy401k[years]).toLocaleString()) //extract value of final year
 		$("label_match_final").innerHTML = "&nbsp;".concat("Year ").concat(years)
-		// $("label_no_match_final").innerHTML = "&nbsp;&nbsp;&nbsp;".concat("Year ").concat(years).concat(" no match &#9760; ")
 		$("label_difference").innerHTML = "&nbsp".concat("Year ").concat(years).concat(" difference")
 
 		$("difference").innerHTML = "$".concat(parseInt(happy401k[years] - sad401k[years]).toLocaleString())
 
-		$("including_interest").innerHTML = "Including interest";
+		$("including_interest").innerHTML = "With rate of return";
 		$("label_with_match").innerHTML = "With match";
 		$("label_no_match").innerHTML = "No match";
 		$("first_year").innerHTML = "&nbsp;Year 1";
 		$("leftarrow").innerHTML = "&#x2198;"
 		$("rightarrow").innerHTML = "&#x2199;"
 	}
+	chart(happy401k, sad401k)
 }
 
-    window.onload = function (){
-        
-        $("salary").focus();
-        $("button").onclick = companyContrib;
 
-        document.addEventListener('keydown', function (event) {
-		if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
-		    event.preventDefault();
-		    companyContrib();
-		  }
-		});
-        
-    }
+//add the line chart
+function chart(happy401k, sad401k){
+	// console.log(happy401k)
+	// console.log(sad401k)
+	console.log({"series":[[Object.values(sad401k)]]});	
+	// new Chartist.Line('#line-chart', data);
+}
+
+
+
+
+window.onload = function (){
+    
+    $("salary").focus();
+    $("button").onclick = companyContrib;
+
+    document.addEventListener('keydown', function (event) {
+	if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
+	    event.preventDefault();
+	    companyContrib();
+	  }
+	});
+}
 
 </script>
+<script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+
+<script>
+  tippy('#zero', {
+    content: 'Fill out the fields to see how the company match boosts your projected amount for retirement.',
+    placement: 'right',
+    maxWidth: 150
+  });
+  tippy('#one', {
+    content: 'The company match is determined by what percent you contribute from your salary.',
+    placement: 'right',
+    maxWidth: 150
+  });
+
+  tippy('#two', {
+    content: 'As of now, the company matches contributions dollar-for-dollar up to 2%, and 50 cents on the dollar for contributions 3% to 6%.',
+    placement: 'right',
+    maxWidth: 150
+  });
+
+   tippy('#three', {
+    content: 'The average rate of return for a 401k is between 5.5% and 8%.',
+    placement: 'right',
+    maxWidth: 150
+  });
+
+  tippy('#four', {
+    content: 'The earlier you start investing, the more you will see your money grow.',
+    placement: 'right',
+    maxWidth: 150
+  }); 
+
+</script>
+
 </html>
