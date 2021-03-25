@@ -3,16 +3,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<title>Tribune 401k calculator</title>
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
-	
+	<link rel='preconnect' href='https://fonts.gstatic.com'>
+	<link href='https://fonts.googleapis.com/css2?family=Anton&display=swap' rel='stylesheet'>
+	<link rel='stylesheet' href='https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css'>
+	<script src='https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js'></script>	
 
 	<style>
-		body,input{background-color:#666666; font-family: 'Anton', sans-serif; letter-spacing: 1px;}
+		body,#wrapper,input{background-color:#666666; font-family: 'Anton', sans-serif; letter-spacing: 1px;}
 		main {margin: 0 auto;}
 		/*main,label,input .ct-label{font-family: 'Anton', sans-serif; letter-spacing: 1px; }*/
 		main, label{color:#00ff00;}
@@ -34,19 +34,19 @@
 		  margin: 4px 0;
 		  border-radius: 8px;
 		}
-		#button{
-			height: 50px;
+		#button, #button2{
+			height: 70px;
 			color:#FFFFFF;
 			font-size:1em;
 			border-radius: 8px;
 			width:99%;
 			float:left;
-			margin: 2.3% auto;
+			margin-bottom: 30px;
 			border: 1px solid #FFFFFF;
 			background-color:#666666;
 		}
-		#button_text{text-align: center; padding: 10px 0px;}
-		#button:hover{
+		#button_text, #button2_text{text-align: center; padding: 10px 0px;}
+		#button:hover, #button2:hover{
 			border: 2px solid #00ff00;
 			color: #00ff00;
 		}
@@ -56,18 +56,18 @@
 			/*border: .5px solid white;*/
 			height: 24px;
 			margin: 0px 9px 0px 0px;
-    	}
-    	div.label{ margin: 3% 0% 1% 0%;}
+		}
+		div.label{ margin: 3% 0% 1% 0%;}
 
-		.difference, #difference{
+		.difference, #difference, #percent{
 			color:#ff8500;
 		}
 		input#no_match_final, input#with_match_final{color:black;}
 
 		.flexbox {
-	        display: flex; 
-    	}
-    	.pair {flex: 1 1 auto; }
+			display: flex; 
+		}
+		.pair {flex: 1 1 auto; }
 
 		label{display:inline-block; width:50%;}
 
@@ -75,7 +75,11 @@
 				text-align: center;
 		}
 
-		#line-chart{height:300px; margin: auto;}
+		#line-chart{
+			height:300px; 
+			margin: auto;
+			letter-spacing: 0px;
+		}
 		.ct-series-a .ct-line, .ct-series-a .ct-point {stroke:#00ff00;}
 		.ct-label {font-size: 15px; color:white;}
 
@@ -83,144 +87,200 @@
 			main{
 				max-width: 600px;
 			}
-			#line-chart{width:45%;}
-		}
-		@media (min-width: 321px) and (max-width: 699px){
-			main h2{font-size: 1.25em; text-align: left;}
-			#line-chart{width:100%;}
-		}
-		@media (max-width: 320px){
-			main h2{font-size: 1em; text-align: left;}
-			#line-chart{width:100%;}
+			span.legend{margin-left: 19%;}
 		}
 
-		button.info{border-radius:10px; outline:none; }
-		/*button:active { border-style: outset;}*/
+		@media (max-width: 699px){
+			span.legend{margin-left: 2%;}
+		}
+			
+		button.info{
+					border-radius:15px; 
+					outline:none; 
+					-webkit-appearance: none;
+					-moz-appearance: none;
+					appearance: none;
+					background: none;
+					border: 1px solid white;
+					color: white;
+					font-weight: 900;
+		}
 
-		input #percent{color:orange;}
 
+	/*chart styles*/	
+	.ct-series-b .ct-line {
+	  stroke: #ff8500;
+	  stroke-width: 5px;
+	}
+
+		
+	/*faq styles	*/
+	#faq p, #faq ul, #faq li {color:white;}
+	#faq {font-family: sans-serif;}
+	#faq a{color:#ff8500;}
 	</style>
-
 
 </head>
 <body>
-	
-    <main>
-        <h2>Tribune/Alden 401k calculator <button class="info" id="zero" class="tooltip">i</button></h2>
-<!--         Enter your salary and how much you contribute each year to find out how much you'll lose with Tribune's
- proposed changes to the the 401(k)	plan -->
-
+	<div id="wrapper">
+	<main>
+		<h2>Tribune/Alden 401k calculator <button class='info' id='zero' class='tooltip'>i</button></h2>
 		<form>        
-        <label for="salary">Salary in dollars <button class="info" id="one" class="tooltip">i</button></label>
-        <input type="text" id="salary" value="$60,000"><br/>
+		<div id='button'><div id='button_text'>Change the numbers below and click or<br/>hit return to calculate your projected 401k</div></div>
 
-        <label for="percent">Your percent contribution <button class="info" id="two" class="tooltip">i</button></label>
-        <input type="text" id="percent" value="5%"><br/>
-        
-        <label for="rate">Rate of return  <button class="info" id="three" class="tooltip">i</button></label>
-        <input type="text" id="rate" value="6.5%"><br/>
-        
-        <label for="years">Years until retirement <button class="info" id="four" class="tooltip">i</button></label>
-        <input type="text" id="years" value="4"><br/>
-        </form>  
-        <!-- <input type="button" id="calculate" value="Click to see your future investment"><br/> -->
-        <div id="button"><div id="button_text">Click to see your projected 401(k)</div></div>
+		<label for='salary'>Salary in dollars <button class='info' id='one' class='tooltip'>i</button></label>
+		<input type='text' id='salary' value='$60,000'><br/>
 
-        <label id="label_annual_contrib"></label>
-        <div id="annual_contrib" class="basic"></div>
-        
-        <label id="label_annual_company_match"></label>
-        <div id="annual_company_match" class="basic"></div>
-        
-        <div class="flexbox label">
-        <div class="pair" id="including_interest"></div>
-        <div class="pair">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-        <div class="pair">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-        <div class="pair" id="label_with_match"></div> 
-        <div class="pair" id="label_no_match"></div>
-    	</div>
+		<label for='percent'>Your percent contribution <button class='info' id='two' class='tooltip'>i</button></label>
+		<input type='text' id='percent' value='5%'><br/>
+		
+		<label for='rate'>Rate of return  <button class='info' id='three' class='tooltip'>i</button></label>
+		<input type='text' id='rate' value='6.5%'><br/>
+		
+		<label for='years'>Years to retirement <button class='info' id='four' class='tooltip'>i</button></label>
+		<input type='text' id='years' value='10'><br/>
+		</form>  
 
-        <div class="flexbox">
-        <label class="pair" id="first_year"></label>        
-        <div class="pair" id="with_match"></div>
-        <div class="pair" id="no_match"></div>
-    	</div>
+		<div style="margin-top:40px; margin-bottom: 40px;">
 
-    	<div class="flexbox">
-        <label class="pair" id="label_match_final"></label>
-        <div class="pair" id="with_match_final"></div>
-        <div class="pair" id="no_match_final"></div>
-    	</div>
+		<label id='label_annual_contrib'></label>
+		<div id='annual_contrib' class='basic'></div>
 
-    	<div class="flexbox">
-    	<div class="pair">&nbsp;</div>
-    	<div class="pair">&nbsp;</div>
-    	<div class="pair">&nbsp;</div>
-    	<div class="pair">&nbsp;</div>
-    	<div class="pair" id="leftarrow"></div>
-    	<div class="pair" id="rightarrow"></div>
-    	</div>
-        <label id="label_difference" class="difference" for="difference"></label>
-        <div class="basic" class="difference" id="difference"></div>
-    </main>
-    	<div id="line-chart" style=""></div>
+		<label id='label_annual_company_match'></label>
+		<div id='annual_company_match' class='basic'></div>
+		
+		</div>
+
+		<div class='flexbox label'>
+		<div class='pair' id='including_interest'></div>
+		<div class='pair'>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div class='pair'>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div class='pair' id='label_with_match'></div> 
+		<div class='pair' id='label_no_match'></div>
+		</div>
+
+		<div class='flexbox'>
+		<label class='pair' id='first_year'></label>        
+		<div class='pair' id='with_match'></div>
+		<div class='pair' id='no_match'></div>
+		</div>
+
+		<div class='flexbox'>
+		<label class='pair' id='label_match_final'></label>
+		<div class='pair' id='with_match_final'></div>
+		<div class='pair' id='no_match_final'></div>
+		</div>
+
+		<div class='flexbox'>
+		<div class='pair'>&nbsp;</div>
+		<div class='pair'>&nbsp;</div>
+		<div class='pair'>&nbsp;</div>
+		<div class='pair'>&nbsp;</div>
+		<div class='pair' id='leftarrow'></div>
+		<div class='pair' id='rightarrow'></div>
+		</div>
+		<label id='label_difference' class='difference' for='difference'></label>
+		<div class='basic' class='difference' id='difference'></div>
+
+		<div id='line-chart' style='margin-top:50px;'>
+			<h2 style="color:#ff8500; line-height: .95em; text-align: center;">Tribune/Alden wants to steal from you $$$</h2>
+			<span class='legend' style="color:#00ff00;">––––––––  Company match proposed to be eliminated</span>
+			&nbsp;&nbsp;&nbsp;<br/>
+			<span class='legend' style="color:#ff8500;">––––––––  Without match</span>
+		</div>
+<!-- 		<div id='button2' style="margin-top: 120px;"><div id='button2_text'>See the 401k FAQ</div></div> -->
+		<div id='faq' style="margin-top:150px;">
+			<h2>401k FAQs</h2>
+			<h4>What is a 401k?</h4>
+			<p>401ks are retirement accounts administered by a company hired by your employer. The company that administers Tribune Publishing 401ks is called Vanguard. There are several reasons to sign up.</p>
+
+			<h4>Why would I want to start a 401k?</h4>
+				<ul>
+				<li>Because it’s a company-run account, you have more choices for investments. (vanguard.com can provide more information).</li><br/>
+				<li>The money comes out as a payroll deduction, so you won’t ever see it until you retire.</li><br/>
+				<li>The money tends to grow with the stock market, tracking the mutual funds they are invested in.</li><br/>
+				<li>Tribune currently contributes to your 401k by offering a match based on what you put in. For the first 2% of your salary that you contribute, Tribune will match you dollar for dollar. For the next 4% you contribute, Tribune will match you 50 cents for every dollar.</li><br/>	
+				<li>There are significant tax breaks with a 401k. Your money is tax-deferred in a traditional 401k, as opposed to what you invest in a savings account or regular stock fund. For Roth IRAs, you pay taxes on what you invest, but not when you withdraw the money in retirement. Year to year gains are also not taxed as income in either kind of plan.</li><br/>
+				</ul>
+
+			<h4>When can I start a 401k?</h4>	
+			<p>You are automatically enrolled in the 401k when you start your job with Tribune unless you opt out. If you do, you can join during annual open enrollment, which Tribune Publishing does in November.</p>
+
+			<h4>What do you mean by employer contributions?</h4>
+			<p>Employer contributions are common with 401ks. It is an amount of money, usually a percentage, that the employer kicks in as an incentive to join the plan.</p> 
+			<p>On the current Tribune Publishing plan most papers are on, the company matches up to 2% of your individual salary, and then matches 50% of your contribution up to 6%, for a possible total of a 4% match.</p>
+			<p>The Baltimore Sun, which has a contract, matches up to 3.5% of an employee’s wages in the 401k.</p>
+	
+
+			<h4>What is vesting?</h4>
+			<p>Vesting refers to ownership. An employee owns a certain portion of the money in his/her/their account that the employer contributes, until a designated time, when they are fully vested and own all of it. The employee owns all of their own contributions from the beginning.</p>
+
+			<h4>What is the proposal?</h4>
+			<p>On the current Tribune plan, employees do not get any of the employer contribution until 2 years, when they are fully vested. The proposed contract 401k plan would change to a gradual vesting; starting with 20% after 1 year, and increasing by 20% until 5 years, where the employee would be fully vested.</p>
+
+			<h4>What if I’m only 25 years old? Why should I contribute to my 401k?</h4>
+			<p>Your pre-tax investment compounds over time, so while it may not seem like much now, a $1,000 contribution per year ($36 per paycheck) will grow to $63,715 when you’re 50 years old. Let’s break it down. You contribute $1,000 annually for a total of $25,000, but the rate of return at 6.5% yields an additional $37,715. And that’s without a company match.</p>
+			<br/>
+			<p>Created with &#9825; by the 401k committee of the unions that represent Tribune/Alden employees, March 2021.</p>
+			<p>Do you have feedback on this calculator? <a href='mailto:contact@adelaidechen.com?subject=calculator feedback'>Email us</a>.</p>
+		</div>	
+	</main>
+	</wrapper>
 </body>
 <script>
 
 
 var $ = function(id) {
-    return document.getElementById(id);
+	return document.getElementById(id);
 };
 
 var companyContrib = function(salary, percent){
 
-	var salary = $("salary").value.replace("$","").replace(",","");
-    var percent = $("percent").value.replace("%","");
+	var salary = $('salary').value.replace('$','').replace(',','');
+	var percent = $('percent').value.replace('%','');
 	var contrib = 0;
 
 	if (percent == 0){
 		contrib == 0;
 		no_match == 0;
-		$("annual_contrib").innerHTML = 0;
-		$("annual_company_match").innerHTML = 0;
+		$('annual_contrib').innerHTML = 0;
+		$('annual_company_match').innerHTML = 0;
 		
 
 	} else if (percent <= 2 && percent > 0) {
 		tribune = (salary * (percent / 100))
 		employee = (salary * (percent / 100))
 		contrib = tribune + employee
-		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString());
-		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString());
+		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString());
+		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString());
 
 	} else if (percent <= 4 && percent > 2){
 		tribune = (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 ) 	
 		employee = (salary * (percent / 100)) 
 		contrib = tribune + employee
-		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString());
-		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString());
+		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString());
+		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString());
 	
 	} else if (percent > 4){
 		employee = (salary * (percent / 100)) 
 		tribune = (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 )
 		contrib = tribune + employee
-		$("label_annual_contrib").innerHTML = "Your contribution";
-		$("label_annual_company_match").innerHTML = "Tribune's match";
-		$("annual_contrib").innerHTML = '$'.concat(employee.toLocaleString()).concat(' each year');
-		$("annual_company_match").innerHTML = '$'.concat(tribune.toLocaleString().concat(' each year'));
+		$('label_annual_contrib').innerHTML = 'Your contribution';
+		$('label_annual_company_match').innerHTML = 'Tribune/Alden match';
+		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString()).concat(' each year');
+		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString().concat(' each year'));
 	}
 
 	futureValues(contrib)
+	chart(contrib)
 }
-
-var happy401kforChart = {} //store values for each year that is calculated
-var sad401kforChart = {}   //store values for each year that is calculated
 
 
 function futureValues(contrib) {
-	var salary = $("salary").value.replace("$","").replace(",","")
-	var percent = $("percent").value.replace("%","")
-	var rate = $("rate").value.replace("%","") / 100
-    var years = Math.round($("years").value)
+	var salary = $('salary').value.replace('$','').replace(',','')
+	var percent = $('percent').value.replace('%','')
+	var rate = $('rate').value.replace('%','') / 100
+	var years = Math.round($('years').value)
 	var futureValue = 0;
 	var no_match_futureValue = 0;
 
@@ -230,93 +290,151 @@ function futureValues(contrib) {
 	
 	for (i = 0; i < years; i++){	
 		contrib_no_match = (salary * (percent / 100))
-		var no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
+		no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
 
 		sad401k[i + 1] = parseInt(no_match_futureValue.toFixed(0))
-		$("no_match").innerHTML = "$".concat(parseInt(sad401k[1]).toLocaleString())
-		$("no_match_final").innerHTML = "$".concat(parseInt(sad401k[years]).toLocaleString())
+		$('no_match').innerHTML = '$'.concat(parseInt(sad401k[1]).toLocaleString())
+		$('no_match_final').innerHTML = '$'.concat(parseInt(sad401k[years]).toLocaleString())
 
 		futureValue = (futureValue + contrib) * (1 + rate); 
 		happy401k[i + 1] = parseInt(futureValue.toFixed(0))	//upload year, value into a dict
 
+		$('with_match').innerHTML =  '$'.concat(parseInt(happy401k[1]).toLocaleString()) //extract value of first year
+		$('with_match_final').innerHTML = '$'.concat(parseInt(happy401k[years]).toLocaleString()) //extract value of final year
+		$('label_match_final').innerHTML = '&nbsp;'.concat('Year ').concat(years)
+		$('label_difference').innerHTML = '&nbsp'.concat('Year ').concat(years).concat(' difference')
 
-		$("with_match").innerHTML =  "$".concat(parseInt(happy401k[1]).toLocaleString()) //extract value of first year
-		$("with_match_final").innerHTML = "$".concat(parseInt(happy401k[years]).toLocaleString()) //extract value of final year
-		$("label_match_final").innerHTML = "&nbsp;".concat("Year ").concat(years)
-		$("label_difference").innerHTML = "&nbsp".concat("Year ").concat(years).concat(" difference")
+		$('difference').innerHTML = '$'.concat(parseInt(happy401k[years] - sad401k[years]).toLocaleString())
 
-		$("difference").innerHTML = "$".concat(parseInt(happy401k[years] - sad401k[years]).toLocaleString())
-
-		$("including_interest").innerHTML = "With rate of return";
-		$("label_with_match").innerHTML = "With match";
-		$("label_no_match").innerHTML = "No match";
-		$("first_year").innerHTML = "&nbsp;Year 1";
-		$("leftarrow").innerHTML = "&#x2198;"
-		$("rightarrow").innerHTML = "&#x2199;"
+		$('including_interest').innerHTML = 'With rate of return';
+		$('label_with_match').innerHTML = 'With match';
+		$('label_no_match').innerHTML = 'No match';
+		$('first_year').innerHTML = '&nbsp;Year 1';
+		$('leftarrow').innerHTML = '&#x2198;'
+		$('rightarrow').innerHTML = '&#x2199;'
 	}
-	chart(happy401k, sad401k)
 }
 
 
 //add the line chart
-function chart(happy401k, sad401k){
-	// console.log(happy401k)
-	// console.log(sad401k)
-	console.log({"series":[[Object.values(sad401k)]]});	
-	// new Chartist.Line('#line-chart', data);
+function chart(contrib){
+	var salary = $('salary').value.replace('$','').replace(',','')
+	var percent = $('percent').value.replace('%','')
+	var rate = $('rate').value.replace('%','') / 100
+	var years = Math.round($('years').value)
+	var futureValue = 0;
+	var no_match_futureValue = 0;
+	var happy401k = {} //store values for each year that is calculated
+	var sad401k = {}   //store values for each year that is calculated
+
+	for (i = 0; i < years; i++){	
+		contrib_no_match = (salary * (percent / 100))
+		no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
+		sad401k[i + 1] = parseInt(no_match_futureValue.toFixed(0))
+
+		futureValue = (futureValue + contrib) * (1 + rate); 
+		happy401k[i + 1] = parseInt(futureValue.toFixed(0))	//upload year, value into a dict
+	}	
+
+	var data = {'labels':Object.keys(sad401k),'series':[Object.values(happy401k),Object.values(sad401k)]};
+
+	console.log(Object.values(happy401k),Object.values(sad401k));	
+	new Chartist.Line('#line-chart', data);
+
+
+	Chartist.createLabel = function(position, length, index, labels, axis, axisOffset, labelOffset, group, classes, useForeignObject, eventEmitter) {
+	  var labelElement;
+	  var positionalData = {};
+
+	  positionalData[axis.units.pos] = position + labelOffset[axis.units.pos];
+	  positionalData[axis.counterUnits.pos] = labelOffset[axis.counterUnits.pos];
+	  positionalData[axis.units.len] = length;
+	  positionalData[axis.counterUnits.len] = Math.max(0, axisOffset + 0);
+
+	  if(useForeignObject) {
+	    // We need to set width and height explicitly to px as span will not expand with width and height being
+	    // 100% in all browsers
+	    var content = document.createElement('span');
+	    content.className = classes.join(' ');
+	    content.setAttribute('xmlns', Chartist.namespaces.xhtml);
+	    content.innerText = labels[index];
+	    content.style[axis.units.len] = Math.round(positionalData[axis.units.len]) + 'px';
+	    content.style[axis.counterUnits.len] = Math.round(positionalData[axis.counterUnits.len]) + 'px';
+
+	    labelElement = group.foreignObject(content, Chartist.extend({
+	      style: 'overflow: visible;'
+	    }, positionalData));
+	  } else {
+	    labelElement = group.elem('text', positionalData, classes.join(' ')).text(labels[index]);
+	  }
+
+	  eventEmitter.emit('draw', Chartist.extend({
+	    type: 'label',
+	    axis: axis,
+	    index: index,
+	    group: group,
+	    element: labelElement,
+	    text: labels[index]
+	  }, positionalData));
+	};
 }
 
 
-
-
 window.onload = function (){
-    
-    $("salary").focus();
-    $("button").onclick = companyContrib;
+	companyContrib()	
+	$('salary').focus();
+	$('button').onclick = companyContrib;
 
-    document.addEventListener('keydown', function (event) {
+	document.addEventListener('keydown', function (event) {
 	if (event.keyCode === 13 && event.target.nodeName === 'INPUT') {
-	    event.preventDefault();
-	    companyContrib();
+		event.preventDefault();
+		chart();
+		companyContrib();
 	  }
 	});
 }
 
 </script>
-<script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+
+<script src='https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js'></script>
+<script src='https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js'></script>
 
 <script>
+
   tippy('#zero', {
-    content: 'Fill out the fields to see how the company match boosts your projected amount for retirement.',
-    placement: 'right',
-    maxWidth: 150
+	content: 'Enter your salary and how much you contribute each year to find out how much you\'ll lose with Tribune/Alden\'s proposed changes to the the 401k plan',
+	placement: 'right',
+	maxWidth: 150,
+	delay: [100, 2500]
   });
   tippy('#one', {
-    content: 'The company match is determined by what percent you contribute from your salary.',
-    placement: 'right',
-    maxWidth: 150
+	content: 'The company match is determined by what percent you contribute from your salary.',
+	placement: 'right',
+	maxWidth: 150,
+	delay: [100, 2500]
   });
 
   tippy('#two', {
-    content: 'As of now, the company matches contributions dollar-for-dollar up to 2%, and 50 cents on the dollar for contributions 3% to 6%.',
-    placement: 'right',
-    maxWidth: 150
+	content: 'As of now, the company matches contributions dollar-for-dollar up to 2%, and 50 cents on the dollar for contributions 3% to 6%.',
+	placement: 'right',
+	maxWidth: 150,
+	delay: [100, 2500]
   });
 
    tippy('#three', {
-    content: 'The average rate of return for a 401k is between 5.5% and 8%.',
-    placement: 'right',
-    maxWidth: 150
+	content: 'The average rate of return for a 401k is between 5.5% and 8%.',
+	placement: 'right',
+	maxWidth: 150,
+	delay: [100, 2500]
   });
 
   tippy('#four', {
-    content: 'The earlier you start investing, the more you will see your money grow.',
-    placement: 'right',
-    maxWidth: 150
+	content: 'The earlier you start investing, the more you will see your money grow.',
+	placement: 'right',
+	maxWidth: 150,
+	delay: [100, 2500]
   }); 
 
 </script>
 
-</html>
+</html>	
