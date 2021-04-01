@@ -132,7 +132,7 @@
 		<input type='text' id='salary' value='$60,000'><br/>
 
 		<label for='percent'>Your percent contribution <button class='info' id='two' class='tooltip'>i</button></label>
-		<input type='text' id='percent' value='5%'><br/>
+		<input type='text' id='percent' value='6%'><br/>
 		
 		<label for='rate'>Rate of return  <button class='info' id='three' class='tooltip'>i</button></label>
 		<input type='text' id='rate' value='6.5%'><br/>
@@ -261,18 +261,28 @@ var companyContrib = function(salary, percent){
 		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString());
 		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString());
 	
-	} else if (percent > 4){
+	} else if (percent <= 6 && percent > 4) {
 		employee = (salary * (percent / 100)) 
 		tribune = (salary * (2 / 100)) + ((salary * ((percent - 2)  / 100)) / 2 )
 		contrib = tribune + employee
-		$('label_annual_contrib').innerHTML = 'Your contribution';
-		$('label_annual_company_match').innerHTML = 'Tribune/Alden match';
+
 		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString()).concat(' each year');
 		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString().concat(' each year'));
+
+	} else {
+		employee = (salary * (percent / 100)) 
+		tribune = (salary * (2 / 100)) + ((salary * (4.0  / 100)) / 2 )
+		contrib = tribune + employee
+
+		$('annual_contrib').innerHTML = '$'.concat(employee.toLocaleString()).concat(' each year');
+		$('annual_company_match').innerHTML = '$'.concat(tribune.toLocaleString().concat(' each year'));
+	
 	}
+	$('label_annual_contrib').innerHTML = 'Your contribution';
+	$('label_annual_company_match').innerHTML = 'Tribune/Alden match';
 
 	futureValues(contrib)
-	chart(contrib)
+	// chart(contrib)
 }
 
 
@@ -313,28 +323,12 @@ function futureValues(contrib) {
 		$('leftarrow').innerHTML = '&#x2198;'
 		$('rightarrow').innerHTML = '&#x2199;'
 	}
+	chart(happy401k, sad401k)
 }
 
 
 //add the line chart
-function chart(contrib){
-	var salary = $('salary').value.replace('$','').replace(',','')
-	var percent = $('percent').value.replace('%','')
-	var rate = $('rate').value.replace('%','') / 100
-	var years = Math.round($('years').value)
-	var futureValue = 0;
-	var no_match_futureValue = 0;
-	var happy401k = {} //store values for each year that is calculated
-	var sad401k = {}   //store values for each year that is calculated
-
-	for (i = 0; i < years; i++){	
-		contrib_no_match = (salary * (percent / 100))
-		no_match_futureValue = (no_match_futureValue + contrib_no_match) * (1 + rate);
-		sad401k[i + 1] = parseInt(no_match_futureValue.toFixed(0))
-
-		futureValue = (futureValue + contrib) * (1 + rate); 
-		happy401k[i + 1] = parseInt(futureValue.toFixed(0))	//upload year, value into a dict
-	}	
+function chart(sad401k,happy401k){
 
 	var data = {'labels':Object.keys(sad401k),'series':[Object.values(happy401k),Object.values(sad401k)]};
 
