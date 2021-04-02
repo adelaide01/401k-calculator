@@ -330,7 +330,7 @@ function futureValues(contrib) {
 //add the line chart
 function chart(sad401k,happy401k){
 
-	var data = {'labels':Object.keys(sad401k),'series':[Object.values(happy401k),Object.values(sad401k)]};
+	var data = {'labels':Object.keys(sad401k),'series':[Object.values(sad401k),Object.values(happy401k)]};
 
 	new Chartist.Line('#line-chart', data);
 
